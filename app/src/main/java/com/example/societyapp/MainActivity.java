@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     TextInputEditText passwordTIET;
     Resident currentResident;
 
+    boolean loggedIn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         useridTIET = (TextInputEditText)findViewById(R.id.userIdTIET);
         passwordTIET = (TextInputEditText)findViewById(R.id.passwordTIET);
+        loggedIn = false;
     }
 
     public void loginHandler(View view){
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         final String password = passwordTIET.getText().toString();
         if(userId.isEmpty()||password.isEmpty()){
             Toast.makeText(this, "Empty fields!", Toast.LENGTH_SHORT).show();
+            loggedIn = false;
         }
         else {
             ref = FirebaseDatabase.getInstance().getReference("residents").child(useridTIET.getText().toString());
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(!dataSnapshot.exists()){
                         Toast.makeText(MainActivity.this, "Invalid UserID!", Toast.LENGTH_SHORT).show();
+                        loggedIn = false;
                     }
                     else {
                         HashMap<String, Object> resident = (HashMap<String, Object>) dataSnapshot.getValue();
@@ -66,10 +71,10 @@ public class MainActivity extends AppCompatActivity {
                             currentResident = new Resident(userId, password, building, floor, flat, name, contactNo, email);
                             Log.i("Loggedin","yes");
 
-                            Intent intent = new Intent(getApplicationContext(),NavigationActivity.class);
-                            startActivity(intent);
+                            loggedIn = true;
 
                         } else {
+                            loggedIn = false;
                             Toast.makeText(MainActivity.this, "Invalid Password!", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -80,6 +85,13 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+            if(loggedIn){
+
+                Intent intent = new Intent(getApplicationContext(),NavigationActivity.class);
+
+                intent.putExtra("currentResident",currentResident);
+                startActivity(intent);
+            }
         }
     }
 }

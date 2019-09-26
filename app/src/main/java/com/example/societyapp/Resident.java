@@ -2,7 +2,9 @@ package com.example.societyapp;
 
 import android.util.Log;
 
-public class Resident {
+import java.io.Serializable;
+
+public class Resident implements Serializable {
 
     String userId;
     String password;
