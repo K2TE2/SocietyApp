@@ -18,6 +18,37 @@
         android:textAlignment="center"
         android:textSize="18sp" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/userRadioGroup"
+                android:orientation="horizontal">
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Resident"
+                android:tag="resident"
+                android:textColor="@color/colorPrimary"
+                android:id="@+id/residentRadioButton"
+                android:onClick="checkHandler"
+                android:checked="true"/>
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/gaurdRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:onClick="checkHandler"
+                    android:tag="gaurd"
+                    android:text="Gaurd"
+                    android:textColor="@color/colorPrimary" />
+            </RadioGroup>
+        </LinearLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/userIdTIL"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

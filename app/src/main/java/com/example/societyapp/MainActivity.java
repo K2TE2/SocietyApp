@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
     TextInputEditText useridTIET;
     TextInputEditText passwordTIET;
     Resident currentResident;
-
-    boolean loggedIn;
+    RadioGroup userRadioGroup;
+    com.google.android.material.radiobutton.MaterialRadioButton radioButton;
+    String userType,userId,password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,61 +40,70 @@ public class MainActivity extends AppCompatActivity {
 
         useridTIET = (TextInputEditText)findViewById(R.id.userIdTIET);
         passwordTIET = (TextInputEditText)findViewById(R.id.passwordTIET);
-        loggedIn = false;
+        userRadioGroup = (RadioGroup)findViewById(R.id.userRadioGroup);
+    }
+
+    public void checkHandler(View view){
+        int id = userRadioGroup.getCheckedRadioButtonId();
+        com.google.android.material.radiobutton.MaterialRadioButton radioButton = (com.google.android.material.radiobutton.MaterialRadioButton)findViewById(id);
+        Log.i("Radio",String.valueOf(id));
+        userType = radioButton.getTag().toString();
     }
 
     public void loginHandler(View view){
-//        Intent intent = new Intent(getApplicationContext(),NavigationActivity.class);
-//        startActivity(intent);
-        final String userId = useridTIET.getText().toString();
-        final String password = passwordTIET.getText().toString();
+
+        userId = useridTIET.getText().toString();
+        password = passwordTIET.getText().toString();
         if(userId.isEmpty()||password.isEmpty()){
             Toast.makeText(this, "Empty fields!", Toast.LENGTH_SHORT).show();
-            loggedIn = false;
         }
         else {
-            ref = FirebaseDatabase.getInstance().getReference("residents").child(useridTIET.getText().toString());
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(!dataSnapshot.exists()){
-                        Toast.makeText(MainActivity.this, "Invalid UserID!", Toast.LENGTH_SHORT).show();
-                        loggedIn = false;
-                    }
-                    else {
-                        HashMap<String, Object> resident = (HashMap<String, Object>) dataSnapshot.getValue();
-                        String rightPassword = resident.get("password").toString();
-                        if (rightPassword.equals(password)) {
-                            String building = resident.get("building").toString();
-                            int floor = Integer.parseInt(resident.get("floor").toString());
-                            int flat = Integer.parseInt(resident.get("flat").toString());
-                            String name = resident.get("name").toString();
-                            long contactNo = Long.parseLong(resident.get("contactNo").toString());
-                            String email = resident.get("email").toString();
-                            currentResident = new Resident(userId, password, building, floor, flat, name, contactNo, email);
-                            Log.i("Loggedin","yes");
-
-                            loggedIn = true;
-
-                        } else {
-                            loggedIn = false;
-                            Toast.makeText(MainActivity.this, "Invalid Password!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-            if(loggedIn){
-
-                Intent intent = new Intent(getApplicationContext(),NavigationActivity.class);
-
-                intent.putExtra("currentResident",currentResident);
-                startActivity(intent);
+            Log.i("User Type",userType);
+            if(userType.equals("resident")){
+                residentLogin();
+            }
+            else {
+                Toast.makeText(this, "Gaurd loggin in!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void residentLogin(){
+        ref = FirebaseDatabase.getInstance().getReference("residents").child(useridTIET.getText().toString());
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    Toast.makeText(MainActivity.this, "Invalid UserID!", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    HashMap<String, Object> resident = (HashMap<String, Object>) dataSnapshot.getValue();
+                    String rightPassword = resident.get("password").toString();
+                    if (rightPassword.equals(password)) {
+                        String building = resident.get("building").toString();
+                        int floor = Integer.parseInt(resident.get("floor").toString());
+                        int flat = Integer.parseInt(resident.get("flat").toString());
+                        String name = resident.get("name").toString();
+                        long contactNo = Long.parseLong(resident.get("contactNo").toString());
+                        String email = resident.get("email").toString();
+                        currentResident = new Resident(userId, password, building, floor, flat, name, contactNo, email);
+                        Log.i("Loggedin","yes");
+
+                        Intent intent = new Intent(getApplicationContext(),NavigationActivity.class);
+
+                        intent.putExtra("currentResident",currentResident);
+                        startActivity(intent);
+
+                    } else {
+                        Toast.makeText(MainActivity.this, "Invalid Password!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
