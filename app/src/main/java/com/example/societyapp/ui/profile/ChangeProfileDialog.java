@@ -32,11 +32,15 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,14 +68,11 @@ public class ChangeProfileDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-
         currentResident = (Resident)getArguments().getSerializable("currentResident");
         userId = currentResident.getUserId();
 
         mStorageRef = FirebaseStorage.getInstance().getReference(userId);
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
 
         View content = inflater.inflate(R.layout.change_profile, null);
         builder.setView(content)
@@ -102,6 +103,27 @@ public class ChangeProfileDialog extends DialogFragment {
         chooseImageButton = (com.google.android.material.button.MaterialButton) content.findViewById(R.id.chooseImageButton);
         newProfileImage = (ImageView)content.findViewById(R.id.newProfileImage);
 
+        ref = FirebaseDatabase.getInstance().getReference("residents/"+userId).child("profilePicture");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    Picasso
+                            .get()
+                            .load(dataSnapshot.getValue().toString())
+                            .into(newProfileImage);
+                }
+                else {
+                    newProfileImage.setImageResource(R.drawable.profile_picture);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +136,8 @@ public class ChangeProfileDialog extends DialogFragment {
         newUserName.setText(currentResident.getName());
         newEmail.setText(currentResident.getEmail());
         newContactNo.setText(String.valueOf(currentResident.getContactNo()));
+
+
 
 
         return builder.create();

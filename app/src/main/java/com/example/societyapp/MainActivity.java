@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        userType = "resident";
         loginButton = (com.google.android.material.button.MaterialButton) findViewById(R.id.loginButton);
 
         useridTIET = (TextInputEditText)findViewById(R.id.userIdTIET);
