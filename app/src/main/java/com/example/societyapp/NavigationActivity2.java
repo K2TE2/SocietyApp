@@ -1,10 +1,12 @@
 package com.example.societyapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -24,26 +26,25 @@ import android.view.Menu;
 public class NavigationActivity2 extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation2);
+
+        Intent intent = getIntent();
+        userId = intent.getStringExtra("userId");
+        Log.i("guard id",userId);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout2);
         NavigationView navigationView = findViewById(R.id.nav_view2);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder( R.id.nav_home2,R.id.nav_profile2)
+        mAppBarConfiguration = new AppBarConfiguration.Builder( R.id.nav_home2,R.id.nav_profile2,R.id.nav_add_visitor)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment2);

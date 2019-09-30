@@ -78,10 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 residentLogin();
             }
             else {
-                Toast.makeText(this, "Gaurd loggin in!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(),NavigationActivity2.class);
-
-                startActivity(intent);
+                guardLogin();
             }
         }
     }
@@ -113,6 +110,35 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
 
                     } else {
+                        Toast.makeText(MainActivity.this, "Invalid Password!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void guardLogin(){
+        ref = FirebaseDatabase.getInstance().getReference("guards").child(useridTIET.getText().toString());
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    Toast.makeText(MainActivity.this, "Invalid UserId!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    HashMap<String,Object>guard = (HashMap<String, Object>) dataSnapshot.getValue();
+                    String rightPassword = guard.get("password").toString();
+                    if(rightPassword.equals(passwordTIET.getText().toString())){
+                        Intent intent = new Intent(getApplicationContext(),NavigationActivity2.class);
+                        intent.putExtra("userId",userId);
+                        startActivity(intent);
+                    }
+                    else{
                         Toast.makeText(MainActivity.this, "Invalid Password!", Toast.LENGTH_SHORT).show();
                     }
                 }
