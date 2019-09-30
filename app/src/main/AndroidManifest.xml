@@ -9,6 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp">
+        <activity
+            android:name=".NavigationActivity2"
+            android:label="@string/title_activity_navigation2"
+            android:theme="@style/Theme.MyApp.NoActionBar"></activity>
+
         <service
             android:name=".MyMessagingService"
             android:exported="false">

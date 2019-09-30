@@ -79,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
             }
             else {
                 Toast.makeText(this, "Gaurd loggin in!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(),NavigationActivity2.class);
+
+                startActivity(intent);
             }
         }
     }
