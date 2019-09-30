@@ -8,7 +8,12 @@
     <fragment
         android:id="@+id/nav_home2"
         android:name="com.example.societyapp.ui2.home2.HomeFragment2"
-        android:label="Home"
+        android:label="Home2"
         tools:layout="@layout/fragment_home2" />
+    <fragment
+        android:id="@+id/nav_profile2"
+        android:name="com.example.societyapp.ui2.profile2.GuardProfileFragment"
+        android:label="Guard2"
+        tools:layout="@layout/fragment_guardprofile" />
 
 </navigation>
