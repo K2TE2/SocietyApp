@@ -65,4 +65,9 @@ public class NavigationActivity2 extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    public String getUserId()
+    {
+        return userId;
+    }
 }
