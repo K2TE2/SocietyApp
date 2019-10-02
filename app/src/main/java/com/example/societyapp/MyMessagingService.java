@@ -22,14 +22,20 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Random;
+
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MyMessagingService extends FirebaseMessagingService {
 
+    private Intent intent;
+
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
+        intent = new Intent(this, MainActivity.class);
         super.onMessageReceived(remoteMessage);
-        showNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
+
+        showNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("message"));
     }
 
     @Override
@@ -47,6 +53,12 @@ public class MyMessagingService extends FirebaseMessagingService {
 
     public void showNotification(String title, String message){
 
+        int notificationID = new Random().nextInt(3000);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this , 0, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
 
         Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
@@ -55,9 +67,10 @@ public class MyMessagingService extends FirebaseMessagingService {
                 .setContentText(message)
                 .setSmallIcon(R.drawable.profile_picture)
                 .setAutoCancel(true)
-                .setSound(soundUri);
+                .setSound(soundUri)
+                .setContentIntent(pendingIntent);
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(this);
-        manager.notify(999,builder.build());
+        manager.notify(notificationID,builder.build());
     }
 }

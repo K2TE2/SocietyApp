@@ -14,6 +14,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -22,13 +23,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    DatabaseReference ref;
+    DatabaseReference ref,ref2;
     com.google.android.material.button.MaterialButton loginButton;
     TextInputEditText useridTIET;
     TextInputEditText passwordTIET;
@@ -103,6 +106,21 @@ public class MainActivity extends AppCompatActivity {
                         String email = resident.get("email").toString();
                         currentResident = new Resident(userId, password, building, floor, flat, name, contactNo, email);
                         Log.i("Loggedin","yes");
+
+                        String topic = building+floor+flat;
+                        Log.i("topic",topic);
+                        FirebaseMessaging.getInstance().subscribeToTopic(topic)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        String msg = "subscribed";
+                                        if (!task.isSuccessful()) {
+                                            msg = "failed";
+                                        }
+                                        Log.d("msg", msg);
+                                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
                         Intent intent = new Intent(getApplicationContext(),NavigationActivity.class);
 
