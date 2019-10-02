@@ -79,9 +79,10 @@ public class AddVisitorFragment extends Fragment {
                 String floor = floor_no.getText().toString();
                 String flat = flat_no.getText().toString();
                 String topic = building+floor+flat;
+                String visitorName = visitor_name.getText().toString();
                 Log.i("topic in add visitor",topic);
                 try {
-                    VisitorNotification notification = new VisitorNotification(getContext(),"title","message",topic);
+                    VisitorNotification notification = new VisitorNotification(getContext(),"A new visitor!","Visitor Name: "+visitorName,topic);
                     notification.sendNotification();
                 } catch (Exception e) {
                     e.printStackTrace();

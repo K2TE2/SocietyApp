@@ -38,13 +38,13 @@
                 android:checked="true"/>
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/gaurdRadioButton"
+                    android:id="@+id/guardRadioButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:onClick="checkHandler"
-                    android:tag="gaurd"
-                    android:text="Gaurd"
+                    android:tag="guard"
+                    android:text="Guard"
                     android:textColor="@color/colorPrimary" />
             </RadioGroup>
         </LinearLayout>

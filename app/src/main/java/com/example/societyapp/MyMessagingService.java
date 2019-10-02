@@ -35,6 +35,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         intent = new Intent(this, MainActivity.class);
         super.onMessageReceived(remoteMessage);
 
+        Log.i("data",remoteMessage.getData().get("vidhi"));
         showNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("message"));
     }
 

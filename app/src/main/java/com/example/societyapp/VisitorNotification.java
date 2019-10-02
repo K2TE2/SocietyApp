@@ -35,6 +35,7 @@ public class VisitorNotification {
         notificationBody = new JSONObject();
         notificationBody.put("title",title);
         notificationBody.put("message",message);
+        notificationBody.put("vidhi","dhoka");
         notification.put("to","/topics/"+topic);
         notification.put("data",notificationBody);
         this.ctx = ctx;
