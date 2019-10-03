@@ -32,7 +32,7 @@ public class MyMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-        intent = new Intent(this, MainActivity.class);
+        intent = new Intent(this, NavigationActivity.class);
         super.onMessageReceived(remoteMessage);
 
         Log.i("data",remoteMessage.getData().get("vidhi"));

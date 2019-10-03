@@ -1,6 +1,11 @@
 package com.example.societyapp.ui2.profile2;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -18,13 +24,25 @@ import com.example.societyapp.NavigationActivity;
 import com.example.societyapp.NavigationActivity2;
 import com.example.societyapp.R;
 import com.example.societyapp.ui.profile.ChangeProfileDialog;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class GuardProfileFragment extends Fragment {
@@ -33,9 +51,13 @@ public class GuardProfileFragment extends Fragment {
     String address, name, userId;
     long contact, gateno, shift;
     TextView guardName, guardAddress, guardContact, guardShift, guardGate, guardUserId;
-    ImageView profilePicture;
+    ImageView profilePictureGuard;
     ChangeProfileDialog dialog;
     DatabaseReference ref;
+    StorageReference mStorageRef;
+    MaterialButton addProfilePictureGuard;
+    Uri mImageUri;
+    final private int CAMERA_REQUEST_CODE = 1;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -54,6 +76,8 @@ public class GuardProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         NavigationActivity2 activity = (NavigationActivity2) getActivity();
         Log.i("key", activity.getUserId());
+
+
         userId = activity.getUserId();
         guardName = (TextView) view.findViewById(R.id.guardName);
         guardAddress = (TextView) view.findViewById(R.id.guardAddress);
@@ -61,6 +85,9 @@ public class GuardProfileFragment extends Fragment {
         guardShift = (TextView) view.findViewById(R.id.guardShift);
         guardGate = (TextView) view.findViewById(R.id.guardGate);
         guardUserId=(TextView) view.findViewById(R.id.guardUserId);
+        mStorageRef = FirebaseStorage.getInstance().getReference(userId);
+        profilePictureGuard = view.findViewById(R.id.profilePictureGuard);
+        addProfilePictureGuard = view.findViewById(R.id.addProfilePictureGuard);
 
         ref = FirebaseDatabase.getInstance().getReference("guards").child(userId);
         ref.addValueEventListener(new ValueEventListener() {
@@ -79,12 +106,39 @@ public class GuardProfileFragment extends Fragment {
                 shift = Long.parseLong(guard.get("shift").toString());
 
                 guardUserId.setText("#" + userId);
-                guardName.setText("Name:" + name);
-                guardContact.setText("Contact:" + contact);
+                guardName.setText("Name: " + name);
+                guardContact.setText("Contact: " + contact);
                 guardAddress.setText("Address: " + address);
                 guardGate.setText("Gate Number: " + gateno);
                 guardShift.setText("Shift: " + shift);
+
+//                if(guard.get("profilePicture")==null){
+//                    profilePictureGuard.setImageResource(R.drawable.profile_picture);
+//                }
+//                else{
+//                    Picasso
+//                            .get()
+//                            .load(guard.get("profilePicture").toString())
+//                            .into(profilePictureGuard);
+//                }
             }
         });
+
+        addProfilePictureGuard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent,CAMERA_REQUEST_CODE);
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==CAMERA_REQUEST_CODE && resultCode==RESULT_OK){
+            Bitmap bitmap = (Bitmap)data.getExtras().get("data");
+            profilePictureGuard.setImageBitmap(bitmap);
+        }
     }
 }
