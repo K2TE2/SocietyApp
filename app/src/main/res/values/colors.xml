@@ -9,4 +9,7 @@
     <color name="grey">#8DA9C4</color>
     <color name="blue">#00BCD4</color>
     <color name="lightgrey">#eceff1</color>
+    <color name="danger">#FF5252</color>
+    <color name="success">#388E3C</color>
+    <color name="ajib">#A0D2DB</color>
 </resources>
