@@ -9,12 +9,19 @@ import com.google.android.material.snackbar.Snackbar;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -22,11 +29,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.HashMap;
 
 public class NavigationActivity2 extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     String userId;
+    View header;
+    TextView nameTextView,userIdTextView;
+    ImageView profileImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +56,40 @@ public class NavigationActivity2 extends AppCompatActivity {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout2);
         NavigationView navigationView = findViewById(R.id.nav_view2);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        header = (View)navigationView.getHeaderView(0);
+        nameTextView = (TextView)header.findViewById(R.id.nameTextView2);
+        userIdTextView = (TextView)header.findViewById(R.id.userIdTextView2);
+        profileImageView = (ImageView)header.findViewById(R.id.profileImageView2);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("guards").child(userId);
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                HashMap<String, Object> guard = (HashMap<String, Object>) dataSnapshot.getValue();
+                nameTextView.setText(guard.get("name").toString());
+                if(guard.get("profilePicture")!=null){
+                    Picasso
+                            .get()
+                            .load(guard.get("profilePicture").toString())
+                            .into(profileImageView);
+                }
+                else{
+                    profileImageView.setImageResource(R.drawable.profile_picture);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        profileImageView.setImageResource(R.drawable.profile_picture);
+        userIdTextView.setText("#"+userId);
+
+
         mAppBarConfiguration = new AppBarConfiguration.Builder( R.id.nav_home2,R.id.nav_profile2,R.id.nav_add_visitor)
                 .setDrawerLayout(drawer)
                 .build();
