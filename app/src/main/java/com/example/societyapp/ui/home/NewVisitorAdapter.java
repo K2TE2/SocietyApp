@@ -51,7 +51,9 @@ public class NewVisitorAdapter extends RecyclerView.Adapter<NewVisitorAdapter.Vi
         holder.nameNewVisitor.setText(visitor.getName());
         holder.contactNoNewVisitor.setText(visitor.getContactNumber());
         holder.vehicleNoNewVisitor.setText(visitor.getVehicleNumber());
-        holder.rovNewVisitor.setText(visitor.getReasonOfVisit());
+        holder.rovNewVisitor.setText("Reason: "+visitor.getReasonOfVisit());
+        holder.dateNewVisitor.setText(visitor.getDate());
+        holder.timeNewVisitor.setText(", "+visitor.getTime());
         if(visitor.getImage().equals("")){
             Log.i("hi","hi");
             holder.imageNewVisitor.setImageResource(R.drawable.profile_picture);
@@ -91,10 +93,46 @@ public class NewVisitorAdapter extends RecyclerView.Adapter<NewVisitorAdapter.Vi
                 vis.put("reasonOfVisit",visitor.getReasonOfVisit());
                 vis.put("guardId",visitor.getGuardId());
                 vis.put("image",visitor.getImage());
+                vis.put("date",visitor.getDate());
+                vis.put("time",visitor.getTime());
                 ref.push().setValue(vis);
                 DatabaseReference newref = FirebaseDatabase.getInstance().getReference("newVisitors").child(house).child(visitor.getKey());
                 newref.removeValue();
-
+            }
+        });
+        holder.decline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                visitorList.remove(position);
+                notifyDataSetChanged();
+                String key = visitor.getKey();
+                String title = "Visitor Status: "+visitor.getName();
+                String body = "Declined! Building: "+visitor.getBuilding()+", Floor: "+visitor.getFloor()+", Flat: "+visitor.getFlat();
+                try {
+                    PermissionNotification notification = new PermissionNotification(ctx,title,body,visitor.getGuardId());
+                    notification.sendNotification();
+                    Toast.makeText(ctx, "Guard will be informed!", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                String house = visitor.getBuilding()+visitor.getFloor()+visitor.getFlat();
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("oldVisitors").child(house);
+                HashMap<String,String>vis = new HashMap<String,String>();
+                vis.put("status","declined");
+                vis.put("name",visitor.getName());
+                vis.put("contactNumber",visitor.getContactNumber());
+                vis.put("vehicleNumber",visitor.getVehicleNumber());
+                vis.put("building",visitor.getBuilding());
+                vis.put("floor",visitor.getFloor());
+                vis.put("flat",visitor.getFlat());
+                vis.put("reasonOfVisit",visitor.getReasonOfVisit());
+                vis.put("guardId",visitor.getGuardId());
+                vis.put("image",visitor.getImage());
+                vis.put("date",visitor.getDate());
+                vis.put("time",visitor.getTime());
+                ref.push().setValue(vis);
+                DatabaseReference newref = FirebaseDatabase.getInstance().getReference("newVisitors").child(house).child(visitor.getKey());
+                newref.removeValue();
             }
         });
     }
@@ -107,7 +145,7 @@ public class NewVisitorAdapter extends RecyclerView.Adapter<NewVisitorAdapter.Vi
     class VisitorViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageNewVisitor;
-        TextView nameNewVisitor,contactNoNewVisitor,vehicleNoNewVisitor,rovNewVisitor;
+        TextView nameNewVisitor,contactNoNewVisitor,vehicleNoNewVisitor,rovNewVisitor,dateNewVisitor,timeNewVisitor;
         MaterialButton accept, decline;
 
         public VisitorViewHolder(@NonNull View itemView) {
@@ -118,6 +156,8 @@ public class NewVisitorAdapter extends RecyclerView.Adapter<NewVisitorAdapter.Vi
             contactNoNewVisitor = itemView.findViewById(R.id.contactNoNewVisitor);
             vehicleNoNewVisitor = itemView.findViewById(R.id.vehicleNoNewVisitor);
             rovNewVisitor = itemView.findViewById(R.id.rovNewVisitor);
+            dateNewVisitor = itemView.findViewById(R.id.dateNewVisitor);
+            timeNewVisitor = itemView.findViewById(R.id.timeNewVisitor);
             accept = itemView.findViewById(R.id.acceptButton);
             decline = itemView.findViewById(R.id.declineButton);
         }

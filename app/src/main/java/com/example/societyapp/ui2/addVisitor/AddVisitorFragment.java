@@ -47,6 +47,9 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import org.json.JSONException;
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
@@ -145,6 +148,14 @@ public class AddVisitorFragment extends Fragment {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     vis.put("image",uri.toString());
+                                    Calendar c = Calendar.getInstance();
+                                    SimpleDateFormat df1 = new SimpleDateFormat("dd-MM-yyyy");
+                                    String date = df1.format(c.getTime());
+                                    SimpleDateFormat df2 = new SimpleDateFormat("HH:mm:ss");
+                                    String time = df2.format(c.getTime());
+                                    vis.put("date",date);
+                                    vis.put("time",time);
+//                                    String date =
                                     ref.setValue(vis);
                                     Log.i("Url",uri.toString());
                                 }

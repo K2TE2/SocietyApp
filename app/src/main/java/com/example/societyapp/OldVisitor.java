@@ -1,27 +1,19 @@
 package com.example.societyapp;
 
-public class Visitor {
+public class OldVisitor {
 
-    String key,name,contactNumber,vehicleNumber,reasonOfVisit,image,building,floor,flat,guardId;
-    String date,time;
+    String name,contactNumber,vehicleNumber,reasonOfVisit,image,guardId,status,date,time;
 
-    public Visitor(String key, String name, String contactNumber, String vehicleNumber, String reasonOfVisit, String image, String building, String floor, String flat, String guardId, String date, String time) {
-        this.key = key;
+    public OldVisitor(String name, String contactNumber, String vehicleNumber, String reasonOfVisit, String image, String guardId, String status, String date, String time) {
         this.name = name;
         this.contactNumber = contactNumber;
         this.vehicleNumber = vehicleNumber;
         this.reasonOfVisit = reasonOfVisit;
         this.image = image;
-        this.building = building;
-        this.floor = floor;
-        this.flat = flat;
         this.guardId = guardId;
+        this.status = status;
         this.date = date;
         this.time = time;
-    }
-
-    public String getKey() {
-        return key;
     }
 
     public String getName() {
@@ -44,20 +36,12 @@ public class Visitor {
         return image;
     }
 
-    public String getBuilding() {
-        return building;
-    }
-
-    public String getFloor() {
-        return floor;
-    }
-
-    public String getFlat() {
-        return flat;
-    }
-
     public String getGuardId() {
         return guardId;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public String getDate() {

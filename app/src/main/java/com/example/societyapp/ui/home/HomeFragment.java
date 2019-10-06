@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
                         if(snapshot1.child("image").exists()){
                             image = newVisitor.get("image").toString();
                         }
-                        Visitor vis = new Visitor(snapshot1.getKey(),name,cn,vn,rov,image,building,floor,flat,guardId);
+                        Visitor vis = new Visitor(snapshot1.getKey(),name,cn,vn,rov,image,building,floor,flat,guardId,newVisitor.get("date"),newVisitor.get("time"));
                         newVisitors.add(vis);
                         Collections.reverse(newVisitors);
                     }
