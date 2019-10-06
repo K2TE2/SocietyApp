@@ -16,6 +16,10 @@
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_menu_camera"
             android:title="History" />
+        <item
+            android:id="@+id/nav_notice_board"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Notice Board" />
     </group>
 
     <item android:title="Communicate">
