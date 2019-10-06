@@ -58,48 +58,53 @@ public class HistoryFragment extends Fragment {
 
         userId = activity.getUserId();
         oldVisitors = new ArrayList<OldVisitor>();
+        Log.i("userId2",userId);
         ref = FirebaseDatabase.getInstance().getReference("residents").child(userId);
         topic = "";
         //extracting the topic
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.i("ds",dataSnapshot.getKey());
                 String building = dataSnapshot.child("building").getValue().toString();
                 String floor = dataSnapshot.child("floor").getValue().toString();
                 String flat = dataSnapshot.child("flat").getValue().toString();
                 topic = building + floor + flat;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        ref2 = FirebaseDatabase.getInstance().getReference("oldVisitors").child(topic);
-        ref2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    oldVisitors.clear();
-                    for(DataSnapshot snapshot1: snapshot.getChildren()){
-                        HashMap<String,String> oldVisitor = (HashMap<String, String>) snapshot1.getValue();
-                        String name = oldVisitor.get("name").toString();
-                        String cn = oldVisitor.get("contactNumber").toString();
-                        String vn = oldVisitor.get("vehicleNumber").toString();
-                        String rov = oldVisitor.get("reasonOfVisit").toString();
-                        String date = oldVisitor.get("date").toString();
-                        String time = oldVisitor.get("time").toString();
-                        String image = "";
-                        if(snapshot1.child("image").exists()){
-                            image = oldVisitor.get("image").toString();
+                Log.i("a",topic);
+                Log.i("topic in history",topic);
+                ref2 = FirebaseDatabase.getInstance().getReference("oldVisitors").child(topic);
+                ref2.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.i("key-1",dataSnapshot.getKey());
+                        oldVisitors.clear();
+                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                            Log.i("key0",snapshot.getKey());
+                            Log.i("key in history",snapshot.getKey());
+                            HashMap<String,String> oldVisitor = (HashMap<String, String>) snapshot.getValue();
+                            String name = oldVisitor.get("name").toString();
+                            String cn = oldVisitor.get("contactNumber").toString();
+                            String vn = oldVisitor.get("vehicleNumber").toString();
+                            String rov = oldVisitor.get("reasonOfVisit").toString();
+                            String date = oldVisitor.get("date").toString();
+                            String time = oldVisitor.get("time").toString();
+                            String image = "";
+                            if(snapshot .child("image").exists()){
+                                image = oldVisitor.get("image").toString();
+                            }
+                            OldVisitor vis = new OldVisitor(name,cn,vn,rov,image,oldVisitor.get("guardId"),oldVisitor.get("status"),date,time);
+                            oldVisitors.add(vis);
+                            Collections.reverse(oldVisitors);
                         }
-                        OldVisitor vis = new OldVisitor(name,cn,vn,rov,image,oldVisitor.get("guardId"),oldVisitor.get("status"),date,time);
-                        oldVisitors.add(vis);
-                        Collections.reverse(oldVisitors);
+                        OldVisitorAdapter adapter = new OldVisitorAdapter(getContext(),oldVisitors);
+                        recyclerView.setAdapter(adapter);
                     }
-                }
-                OldVisitorAdapter adapter = new OldVisitorAdapter(getContext(),oldVisitors);
-                recyclerView.setAdapter(adapter);
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
@@ -107,5 +112,6 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+
     }
 }

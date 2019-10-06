@@ -123,6 +123,7 @@ public class AddVisitorFragment extends Fragment {
                 NavigationActivity2 activity = (NavigationActivity2)getActivity();
                 userId = activity.getUserId();
 
+                Log.i("addvisitor","buttonClicked");
 
                 mStorageRef = FirebaseStorage.getInstance().getReference(topic);
 
@@ -157,6 +158,8 @@ public class AddVisitorFragment extends Fragment {
                                     vis.put("time",time);
 //                                    String date =
                                     ref.setValue(vis);
+
+                                    Log.i("addvisitor","buttonClicked");
                                     Log.i("Url",uri.toString());
                                 }
                             });
@@ -167,6 +170,17 @@ public class AddVisitorFragment extends Fragment {
                             Log.i("Fail",e.getMessage());
                         }
                     });
+                }
+                else {
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat df1 = new SimpleDateFormat("dd-MM-yyyy");
+                    String date = df1.format(c.getTime());
+                    SimpleDateFormat df2 = new SimpleDateFormat("HH:mm:ss");
+                    String time = df2.format(c.getTime());
+                    vis.put("date",date);
+                    vis.put("time",time);
+                    Log.i("blah","blah");
+                    ref.setValue(vis);
                 }
 
                 try {

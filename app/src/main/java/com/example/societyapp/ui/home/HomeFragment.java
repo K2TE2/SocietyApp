@@ -73,44 +73,44 @@ public class HomeFragment extends Fragment {
                 String floor = dataSnapshot.child("floor").getValue().toString();
                 String flat = dataSnapshot.child("flat").getValue().toString();
                 topic = building + floor + flat;
-                Log.i("flatnumber",topic);
-            }
+//                Log.i("flatnumber",topic);
+                Log.i("topic in home fragment",topic);
+                ref2 = FirebaseDatabase.getInstance().getReference("newVisitors").child(topic);
+                ref2.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        ref2 = FirebaseDatabase.getInstance().getReference("newVisitors").child(topic);
-        ref2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                Log.i("key",dataSnapshot.getKey());
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    newVisitors.clear();
-                    for(DataSnapshot snapshot1: snapshot.getChildren()){
-                        HashMap<String,String>newVisitor = (HashMap<String, String>) snapshot1.getValue();
-                        String guardId = newVisitor.get("guardId").toString();
-                        String name = newVisitor.get("name").toString();
-                        String cn = newVisitor.get("contactNumber").toString();
-                        String vn = newVisitor.get("vehicleNumber").toString();
-                        String rov = newVisitor.get("reasonOfVisit").toString();
-                        String building = newVisitor.get("building").toString();
-                        String floor = newVisitor.get("floor").toString();
-                        String flat = newVisitor.get("flat").toString();
-                        String image = "";
-                        Log.i("key6",snapshot1.getKey());
-                        if(snapshot1.child("image").exists()){
-                            image = newVisitor.get("image").toString();
+                        newVisitors.clear();
+                        Log.i("key",dataSnapshot.getKey());
+                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                            Log.i("key10",snapshot.getKey());
+                            HashMap<String,String>newVisitor = (HashMap<String, String>) snapshot.getValue();
+                            String guardId = newVisitor.get("guardId").toString();
+                            String name = newVisitor.get("name").toString();
+                            String cn = newVisitor.get("contactNumber").toString();
+                            String vn = newVisitor.get("vehicleNumber").toString();
+                            String rov = newVisitor.get("reasonOfVisit").toString();
+                            String building = newVisitor.get("building").toString();
+                            String floor = newVisitor.get("floor").toString();
+                            String flat = newVisitor.get("flat").toString();
+                            String image = "";
+                            Log.i("key6",snapshot.getKey());
+                            if(snapshot.child("image").exists()){
+                                image = newVisitor.get("image").toString();
+                            }
+                            Visitor vis = new Visitor(snapshot.getKey(),name,cn,vn,rov,image,building,floor,flat,guardId,newVisitor.get("date"),newVisitor.get("time"));
+                            newVisitors.add(vis);
+                            Collections.reverse(newVisitors);
                         }
-                        Visitor vis = new Visitor(snapshot1.getKey(),name,cn,vn,rov,image,building,floor,flat,guardId,newVisitor.get("date"),newVisitor.get("time"));
-                        newVisitors.add(vis);
-                        Collections.reverse(newVisitors);
+                        NewVisitorAdapter adapter = new NewVisitorAdapter(getContext(),newVisitors);
+                        recyclerView.setAdapter(adapter);
                     }
-                }
-                NewVisitorAdapter adapter = new NewVisitorAdapter(getContext(),newVisitors);
-                recyclerView.setAdapter(adapter);
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
@@ -118,5 +118,6 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
     }
 }
