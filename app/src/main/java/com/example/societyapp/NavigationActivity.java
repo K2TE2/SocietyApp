@@ -106,7 +106,7 @@ public class NavigationActivity extends AppCompatActivity {
         userIdTextView.setText(currentResident.getUserId());
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home,R.id.nav_profile, R.id.nav_share)
+                R.id.nav_home,R.id.nav_profile,R.id.nav_history, R.id.nav_share)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

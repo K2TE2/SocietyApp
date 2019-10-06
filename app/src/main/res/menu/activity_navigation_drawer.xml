@@ -12,6 +12,10 @@
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_profile" />
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="History" />
     </group>
 
     <item android:title="Communicate">
