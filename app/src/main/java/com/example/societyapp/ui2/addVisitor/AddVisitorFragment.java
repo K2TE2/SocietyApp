@@ -145,6 +145,7 @@ public class AddVisitorFragment extends Fragment {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     vis.put("image",uri.toString());
+                                    ref.setValue(vis);
                                     Log.i("Url",uri.toString());
                                 }
                             });
@@ -156,7 +157,6 @@ public class AddVisitorFragment extends Fragment {
                         }
                     });
                 }
-                ref.setValue(vis);
 
                 try {
                     VisitorNotification notification = new VisitorNotification(getContext(),"A new visitor!","Visitor Name: "+visitorName,topic);

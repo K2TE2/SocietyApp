@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -90,19 +91,23 @@ public class HomeFragment extends Fragment {
                     newVisitors.clear();
                     for(DataSnapshot snapshot1: snapshot.getChildren()){
                         HashMap<String,String>newVisitor = (HashMap<String, String>) snapshot1.getValue();
+                        String guardId = newVisitor.get("guardId").toString();
                         String name = newVisitor.get("name").toString();
                         String cn = newVisitor.get("contactNumber").toString();
                         String vn = newVisitor.get("vehicleNumber").toString();
                         String rov = newVisitor.get("reasonOfVisit").toString();
+                        String building = newVisitor.get("building").toString();
+                        String floor = newVisitor.get("floor").toString();
+                        String flat = newVisitor.get("flat").toString();
                         String image = "";
+                        Log.i("key6",snapshot1.getKey());
                         if(snapshot1.child("image").exists()){
                             image = newVisitor.get("image").toString();
                         }
-                        Visitor vis = new Visitor(name,cn,vn,rov,image);
+                        Visitor vis = new Visitor(snapshot1.getKey(),name,cn,vn,rov,image,building,floor,flat,guardId);
                         newVisitors.add(vis);
+                        Collections.reverse(newVisitors);
                     }
-                }
-                for(Visitor v:newVisitors){
                 }
                 NewVisitorAdapter adapter = new NewVisitorAdapter(getContext(),newVisitors);
                 recyclerView.setAdapter(adapter);

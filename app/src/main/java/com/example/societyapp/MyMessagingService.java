@@ -29,13 +29,15 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 public class MyMessagingService extends FirebaseMessagingService {
 
     private Intent intent;
+    String type;
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         intent = new Intent(this, MainActivity.class);
         super.onMessageReceived(remoteMessage);
 
-        Log.i("data",remoteMessage.getData().get("vidhi"));
+        type = remoteMessage.getData().get("type");
+        Log.i("type",type);
         showNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("message"));
     }
 

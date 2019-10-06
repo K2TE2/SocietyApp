@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VisitorNotification {
+public class PermissionNotification {
 
     final String SERVER_KEY = "key="+"AAAA50A3L3s:APA91bHUNIXZisyVkYtw0DWYmw64T45UmImcugcsrcMv_caSiZSjefuk3T62B5Oeq7vx60KRLtAnMXedLWdjlPbJm_zgoMsViraEuijFCwFrUFVAZXAwgwSBKt2DmDm0iH54KrY-6pVq";
     final String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";
@@ -30,10 +30,10 @@ public class VisitorNotification {
     JSONObject notification,notificationBody;
     private Context ctx;
 
-    public VisitorNotification(Context ctx,String title,String message,String topic) throws JSONException {
+    public PermissionNotification(Context ctx,String title,String message,String topic) throws JSONException {
         notification = new JSONObject();
         notificationBody = new JSONObject();
-        notificationBody.put("type","g2v");
+        notificationBody.put("type","v2g");
         notificationBody.put("title",title);
         notificationBody.put("message",message);
         notification.put("to","/topics/"+topic);

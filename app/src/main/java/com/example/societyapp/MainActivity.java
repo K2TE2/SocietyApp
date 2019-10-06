@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         currentResident = new Resident(userId, password, building, floor, flat, name, contactNo, email);
                         Log.i("Loggedin","yes");
 
+                        //residents subscribing to topic
                         String topic = building+floor+flat;
                         Log.i("topic",topic);
                         FirebaseMessaging.getInstance().subscribeToTopic(topic)
@@ -151,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
                 else{
                     HashMap<String,Object>guard = (HashMap<String, Object>) dataSnapshot.getValue();
                     String rightPassword = guard.get("password").toString();
+                    //subscribing to topic
+                    FirebaseMessaging.getInstance().subscribeToTopic(userId);
                     if(rightPassword.equals(passwordTIET.getText().toString())){
                         Intent intent = new Intent(getApplicationContext(),NavigationActivity2.class);
                         intent.putExtra("userId",userId);
