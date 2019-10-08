@@ -1,12 +1,15 @@
 package com.example.societyapp.ui.profile;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,10 +27,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.societyapp.R;
 import com.example.societyapp.Resident;
+import com.example.societyapp.ui2.profile2.GuardProfileFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -41,9 +47,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class ChangeProfileDialog extends DialogFragment {
@@ -61,6 +71,7 @@ public class ChangeProfileDialog extends DialogFragment {
 
     private static  final int PICK_IMAGE_REQUEST = 1;
     private static  final int RESULT_OK = -1;
+    final private int CAMERA_REQUEST_CODE = 1;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -87,7 +98,6 @@ public class ChangeProfileDialog extends DialogFragment {
                         newValues.put("contactNo",newContactNo.getText().toString());
                         ref.updateChildren((Map)newValues,null);
 
-                        uploadFile();
 
                         Toast.makeText(getContext(), "Profile Updated!", Toast.LENGTH_SHORT).show();
                     }
@@ -146,33 +156,16 @@ public class ChangeProfileDialog extends DialogFragment {
 
 
     public void openFileChooser(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent,PICK_IMAGE_REQUEST);
-    }
-
-    public void uploadFile(){
-        if(mImageUri!=null){
-            final StorageReference fileReference = mStorageRef.child("ProfilePicture"+"."+getFileExtendsion(mImageUri));
-            fileReference.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            mDbRef = FirebaseDatabase.getInstance().getReference("residents/"+userId).child("profilePicture");
-                            mDbRef.setValue(uri.toString());
-                            Log.i("Url",uri.toString());
-                        }
-                    });
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.i("Fail",e.getMessage());
-                }
-            });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_REQUEST_CODE);
+            } else {
+                CropImage.activity()
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(1, 1)
+                        .start(getContext(), ChangeProfileDialog.this);
+            }
         }
     }
 
@@ -185,10 +178,38 @@ public class ChangeProfileDialog extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData()!=null) {
-            mImageUri = data.getData();
-            newProfileImage.setImageURI(mImageUri);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                {
+                    mImageUri = result.getUri();
+                    Log.i("mImageUri", mImageUri.toString());
+                    newProfileImage.setImageURI(mImageUri);
+                    if(mImageUri!=null){
+                        final StorageReference fileReference = mStorageRef.child("ProfilePicture"+"."+getFileExtendsion(mImageUri));
+                        fileReference.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        mDbRef = FirebaseDatabase.getInstance().getReference("residents/"+userId).child("profilePicture");
+                                        mDbRef.setValue(uri.toString());
+                                        Log.i("Url",uri.toString());
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.i("Fail",e.getMessage());
+                            }
+                        });
+                    } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                        Exception error = result.getError();
+                    }
+                }
+            }
         }
     }
 
