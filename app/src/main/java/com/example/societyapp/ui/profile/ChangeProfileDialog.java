@@ -196,6 +196,7 @@ public class ChangeProfileDialog extends DialogFragment {
                                         mDbRef = FirebaseDatabase.getInstance().getReference("residents/"+userId).child("profilePicture");
                                         mDbRef.setValue(uri.toString());
                                         Log.i("Url",uri.toString());
+                                        Toast.makeText(getContext(), "Profile Picture updated!", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }

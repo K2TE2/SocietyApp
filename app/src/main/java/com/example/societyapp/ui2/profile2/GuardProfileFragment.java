@@ -176,6 +176,7 @@ public class GuardProfileFragment extends Fragment {
                                         DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("guards/" + userId).child("profilePicture");
                                         ref2.setValue(uri.toString());
                                         Log.i("Url", uri.toString());
+                                        Toast.makeText(getContext(), "Profile Photo updated!", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }

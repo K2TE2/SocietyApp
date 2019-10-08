@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                                             msg = "failed";
                                         }
                                         Log.d("msg", msg);
-                                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
