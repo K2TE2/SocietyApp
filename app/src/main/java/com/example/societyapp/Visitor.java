@@ -2,10 +2,10 @@ package com.example.societyapp;
 
 public class Visitor {
 
-    String key,name,contactNumber,vehicleNumber,reasonOfVisit,image,building,floor,flat,guardId;
+    String key,name,contactNumber,vehicleNumber,reasonOfVisit,image,building,floor,flat,guardId,status;
     String date,time;
 
-    public Visitor(String key, String name, String contactNumber, String vehicleNumber, String reasonOfVisit, String image, String building, String floor, String flat, String guardId, String date, String time) {
+    public Visitor(String key, String name, String contactNumber, String vehicleNumber, String reasonOfVisit, String image, String building, String floor, String flat, String guardId, String date, String time,String status) {
         this.key = key;
         this.name = name;
         this.contactNumber = contactNumber;
@@ -18,10 +18,15 @@ public class Visitor {
         this.guardId = guardId;
         this.date = date;
         this.time = time;
+        this.status = status;
     }
 
     public String getKey() {
         return key;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public String getName() {

@@ -31,7 +31,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/imageOldVisitor"
                 android:background="@color/colorPrimary"
-                android:paddingLeft="15dp"
+                android:paddingLeft="0dp"
                 android:paddingRight="15dp"
                 android:text="Name"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small.Inverse"

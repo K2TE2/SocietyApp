@@ -53,7 +53,7 @@ public class NewVisitorAdapter extends RecyclerView.Adapter<NewVisitorAdapter.Vi
         holder.vehicleNoNewVisitor.setText(visitor.getVehicleNumber());
         holder.rovNewVisitor.setText("Reason: "+visitor.getReasonOfVisit());
         holder.dateNewVisitor.setText(visitor.getDate());
-        holder.timeNewVisitor.setText(", "+visitor.getTime());
+        holder.timeNewVisitor.setText(",  "+visitor.getTime());
         if(visitor.getImage().equals("")){
             Log.i("hi","hi");
             holder.imageNewVisitor.setImageResource(R.drawable.profile_picture);
@@ -76,7 +76,7 @@ public class NewVisitorAdapter extends RecyclerView.Adapter<NewVisitorAdapter.Vi
                 try {
                     PermissionNotification notification = new PermissionNotification(ctx,title,body,visitor.getGuardId());
                     notification.sendNotification();
-                    Toast.makeText(ctx, "Guard will be informed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, "Notification sent!", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -98,6 +98,7 @@ public class NewVisitorAdapter extends RecyclerView.Adapter<NewVisitorAdapter.Vi
                 ref.push().setValue(vis);
                 DatabaseReference newref = FirebaseDatabase.getInstance().getReference("newVisitors").child(house).child(visitor.getKey());
                 newref.removeValue();
+                Toast.makeText(ctx, "Done!", Toast.LENGTH_SHORT).show();
             }
         });
         holder.decline.setOnClickListener(new View.OnClickListener() {

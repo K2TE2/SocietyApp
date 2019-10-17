@@ -5,6 +5,8 @@
     android:orientation="vertical"
     android:gravity="center">
 
+
+
     <TextView
         android:id="@+id/loginInstructionTV"
         android:layout_width="match_parent"
@@ -88,5 +90,9 @@
         android:layout_marginTop="10dp"
         android:onClick="loginHandler"
         android:text="Login" />
+
+
+
+
 
 </LinearLayout>

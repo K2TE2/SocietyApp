@@ -6,11 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import com.example.societyapp.ui2.Main2Activity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -106,7 +108,7 @@ public class NavigationActivity extends AppCompatActivity {
         userIdTextView.setText(currentResident.getUserId());
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home,R.id.nav_profile,R.id.nav_history,R.id.nav_notice_board, R.id.nav_share)
+                R.id.nav_home,R.id.nav_profile,R.id.nav_history,R.id.nav_notice_board, R.id.nav_share, R.id.nav_contacts)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -130,5 +132,15 @@ public class NavigationActivity extends AppCompatActivity {
 
     public String getUserId(){
         return currentResident.getUserId();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId()==R.id.logoutButton){
+            Intent intent = new Intent(getApplicationContext(), Main2Activity.class);
+            startActivity(intent);
+            NavigationActivity:finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -43,13 +43,7 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-//        final TextView textView = root.findViewById(R.id.text_home);
-//        homeViewModel.getText().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
+
         return root;
     }
 
@@ -98,7 +92,7 @@ public class HomeFragment extends Fragment {
                             if(snapshot.child("image").exists()){
                                 image = newVisitor.get("image").toString();
                             }
-                            Visitor vis = new Visitor(snapshot.getKey(),name,cn,vn,rov,image,building,floor,flat,guardId,newVisitor.get("date"),newVisitor.get("time"));
+                            Visitor vis = new Visitor(snapshot.getKey(),name,cn,vn,rov,image,building,floor,flat,guardId,newVisitor.get("date"),newVisitor.get("time"),"");
                             newVisitors.add(vis);
                             Collections.reverse(newVisitors);
                         }

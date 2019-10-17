@@ -158,6 +158,7 @@ public class AddVisitorFragment extends Fragment {
                                     vis.put("time",time);
 //                                    String date =
                                     ref.setValue(vis);
+                                    Toast.makeText(getContext(), "Visitor added!", Toast.LENGTH_SHORT).show();
 
                                     Log.i("addvisitor","buttonClicked");
                                     Log.i("Url",uri.toString());
@@ -181,6 +182,7 @@ public class AddVisitorFragment extends Fragment {
                     vis.put("time",time);
                     Log.i("blah","blah");
                     ref.setValue(vis);
+                    Toast.makeText(activity, "Visitor added!", Toast.LENGTH_SHORT).show();
                 }
 
                 try {

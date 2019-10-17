@@ -3,10 +3,12 @@ package com.example.societyapp;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.societyapp.ui2.Main2Activity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -115,5 +117,15 @@ public class NavigationActivity2 extends AppCompatActivity {
     public String getUserId()
     {
         return userId;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId()==R.id.logoutButton){
+            Intent intent = new Intent(getApplicationContext(), Main2Activity.class);
+            startActivity(intent);
+            NavigationActivity2:finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

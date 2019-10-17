@@ -3,6 +3,11 @@ package com.example.societyapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Bundle;
+
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -13,6 +18,7 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.societyapp.ui2.Main2Activity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -32,147 +38,36 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import android.view.WindowManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    DatabaseReference ref,ref2;
-    com.google.android.material.button.MaterialButton loginButton;
-    TextInputEditText useridTIET;
-    TextInputEditText passwordTIET;
-    Resident currentResident;
-    RadioGroup userRadioGroup;
-    com.google.android.material.radiobutton.MaterialRadioButton radioButton;
-    String userType,userId,password;
-
+    private static int SPLASH_SCREEN_TIME_OUT=2000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        //Branch Vid
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //This method is used so that your splash activity
+        //can cover the entire screen.
 
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-            NotificationChannel notificationChannel = new NotificationChannel("MyNotifications","MyNotifications", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(notificationChannel);
-        }
+        setContentView(R.layout.first);
+        //this will bind your MainActivity.class file with activity_main.
 
-        userType = "resident";
-        loginButton = (com.google.android.material.button.MaterialButton) findViewById(R.id.loginButton);
-
-        useridTIET = (TextInputEditText)findViewById(R.id.userIdTIET);
-        passwordTIET = (TextInputEditText)findViewById(R.id.passwordTIET);
-        userRadioGroup = (RadioGroup)findViewById(R.id.userRadioGroup);
-    }
-
-    public void checkHandler(View view){
-        int id = userRadioGroup.getCheckedRadioButtonId();
-        com.google.android.material.radiobutton.MaterialRadioButton radioButton = (com.google.android.material.radiobutton.MaterialRadioButton)findViewById(id);
-        Log.i("Radio",String.valueOf(id));
-        userType = radioButton.getTag().toString();
-    }
-
-    public void loginHandler(View view){
-
-        userId = useridTIET.getText().toString();
-        password = passwordTIET.getText().toString();
-        if(userId.isEmpty()||password.isEmpty()){
-            Toast.makeText(this, "Empty fields!", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Log.i("User Type",userType);
-            if(userType.equals("resident")){
-                residentLogin();
-            }
-            else {
-                guardLogin();
-            }
-        }
-    }
-
-    public void residentLogin(){
-        ref = FirebaseDatabase.getInstance().getReference("residents").child(useridTIET.getText().toString());
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()){
-                    Toast.makeText(MainActivity.this, "Invalid UserID!", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    HashMap<String, Object> resident = (HashMap<String, Object>) dataSnapshot.getValue();
-                    String rightPassword = resident.get("password").toString();
-                    if (rightPassword.equals(password)) {
-                        String building = resident.get("building").toString();
-                        int floor = Integer.parseInt(resident.get("floor").toString());
-                        int flat = Integer.parseInt(resident.get("flat").toString());
-                        String name = resident.get("name").toString();
-                        long contactNo = Long.parseLong(resident.get("contactNo").toString());
-                        String email = resident.get("email").toString();
-                        currentResident = new Resident(userId, password, building, floor, flat, name, contactNo, email);
-                        Log.i("Loggedin","yes");
+            public void run() {
+                Intent i=new Intent(MainActivity.this,
+                        Main2Activity.class);
+                //Intent is used to switch from one activity to another.
 
-                        //residents subscribing to topic
-                        String topic = building+floor+flat;
-                        Log.i("topic",topic);
-                        FirebaseMessaging.getInstance().subscribeToTopic(topic)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        String msg = "subscribed";
-                                        if (!task.isSuccessful()) {
-                                            msg = "failed";
-                                        }
-                                        Log.d("msg", msg);
-                                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                startActivity(i);
+                //invoke the SecondActivity.
 
-                        Intent intent = new Intent(getApplicationContext(),NavigationActivity.class);
-
-                        intent.putExtra("currentResident",currentResident);
-                        startActivity(intent);
-
-                    } else {
-                        Toast.makeText(MainActivity.this, "Invalid Password!", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                finish();
+                //the current activity will get finished.
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    public void guardLogin(){
-        ref = FirebaseDatabase.getInstance().getReference("guards").child(useridTIET.getText().toString());
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()){
-                    Toast.makeText(MainActivity.this, "Invalid UserId!", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    HashMap<String,Object>guard = (HashMap<String, Object>) dataSnapshot.getValue();
-                    String rightPassword = guard.get("password").toString();
-                    //subscribing to topic
-                    FirebaseMessaging.getInstance().subscribeToTopic(userId);
-                    if(rightPassword.equals(passwordTIET.getText().toString())){
-                        Intent intent = new Intent(getApplicationContext(),NavigationActivity2.class);
-                        intent.putExtra("userId",userId);
-                        startActivity(intent);
-                    }
-                    else{
-                        Toast.makeText(MainActivity.this, "Invalid Password!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        }, SPLASH_SCREEN_TIME_OUT);
     }
 }

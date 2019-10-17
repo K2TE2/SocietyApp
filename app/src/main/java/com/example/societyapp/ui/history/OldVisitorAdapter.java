@@ -43,7 +43,7 @@ public class OldVisitorAdapter extends RecyclerView.Adapter<OldVisitorAdapter.Ol
         holder.vehicleNoOldVisitor.setText(visitor.getVehicleNumber());
         holder.rovOldVisitor.setText(visitor.getReasonOfVisit());
         holder.dateOldVisitor.setText(visitor.getDate());
-        holder.timeOldVisitor.setText(", "+visitor.getTime());
+        holder.timeOldVisitor.setText(",    "+visitor.getTime());
         if (visitor.getStatus().equals("accepted")){
             holder.cardOldVisitor.setCardBackgroundColor(ctx.getResources().getColor(R.color.lightSuccess,null));
         }
